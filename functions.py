@@ -3,6 +3,24 @@ import csv
 import datetime
 
 
+def menu():
+    while True:
+        print('''
+        \nINVENTORY
+        \rPress 'v' to view all products
+        \rPress 'a' to add a product
+        \rPress 'b' to backup your database (.csv)
+        \rPress 'q' to exit''')
+        choice = input('What would you like to do? ')
+        if choice.lower() in ['v', 'a', 'b', 'q']:
+            return choice
+        else:
+            input('''
+            \rPlease choose one of the options above.
+            \rEnter v, a, b, or q.
+            \rPress Enter to try again.''')
+
+
 def clean_date(date_str):
     split_date = date_str.split('/')
     try:

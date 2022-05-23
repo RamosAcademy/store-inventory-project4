@@ -2,26 +2,7 @@ from models import (Base, session, Product, engine)
 import datetime
 import time
 
-from functions import clean_date, clean_price, add_csv
-
-
-def menu():
-    while True:
-        print('''
-        \nPROGRAMMING BOOKS
-        \r1. Add book
-        \r2. View all books
-        \r3. Search for book
-        \r4. Book analysis
-        \r5. Exit''')
-        choice = input('What would you like to do? ')
-        if choice in ['1', '2', '3', '4', '5']:
-            return choice
-        else:
-            input('''
-            \rPlease choose one of the options above.
-            \rA number from 1 - 5.
-            \rPress Enter to try again.''')
+from functions import clean_date, clean_price, add_csv, menu
 
 
 def sub_menu():
@@ -182,6 +163,7 @@ if __name__ == '__main__':
     Base.metadata.create_all(engine)
     add_csv()
     # app()
+    menu()
 
-    for product in session.query(Product):
-        print(product)
+    # for product in session.query(Product):
+    #     print(product)
