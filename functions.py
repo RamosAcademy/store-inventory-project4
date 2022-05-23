@@ -1,5 +1,6 @@
 from models import (Base, session, Product, engine)
 import csv
+import datetime
 
 
 def clean_date(date_str):

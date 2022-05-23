@@ -1,8 +1,9 @@
-from models import (Base, session,
-                    Book, engine)
+from models import (Base, session, Product, engine)
 import datetime
 import csv
 import time
+
+from functions import clean_date, clean_price, add_csv
 
 
 def menu():
@@ -23,9 +24,6 @@ def menu():
             \rA number from 1 - 5.
             \rPress Enter to try again.''')
 
-# edit books
-# delete books
-
 
 def sub_menu():
     while True:
@@ -41,41 +39,6 @@ def sub_menu():
             \rPlease choose one of the options above.
             \rA number from 1 - 3.
             \rPress Enter to try again.''')
-
-
-def clean_date(date_str):
-    months = ['January', 'February', 'March', 'April', 'May', 'June',
-              'July', 'August', 'September', 'October', 'November', 'December']
-    split_date = date_str.split(' ')
-    try:
-        month = int(months.index(split_date[0]) + 1)
-        day = int(split_date[1].split(',')[0])
-        year = int(split_date[2])
-        return_date = datetime.date(year, month, day)
-    except ValueError:
-        input('''
-        \n *** DATE ERROR ***
-        \r The date format should include a valid Month Day, Year from the past.
-        \rEx. January 13, 2003.
-        \rPress Enter to try again.
-        \r*******************''')
-        return
-    else:
-        return return_date
-
-
-def clean_price(price_str):
-    try:
-        price_float = float(price_str)
-    except ValueError:
-        input('''
-        \n*** PRICE ERROR ***
-        \rThe price should be a number without a currency symbol.
-        \rEx. 10.99
-        \rPress Enter to try again.
-        \r*******************''')
-        return
-    return int(price_float * 100)
 
 
 def clean_id(id_str, options):
@@ -124,23 +87,6 @@ def edit_check(column_name, current_value):
 
     else:
         return input("What would you like to change the value to? ")
-
-
-def add_csv():
-    with open('suggested_books.csv') as csvfile:
-        data = csv.reader(csvfile)
-        for row in data:
-            book_in_db = session.query(Book).filter(
-                Book.title == row[0]).one_or_none()
-            if book_in_db == None:
-                title = row[0]
-                author = row[1]
-                date = clean_date(row[2])
-                price = clean_price(row[3])
-                new_book = Book(title=title, author=author,
-                                published_date=date, price=price)
-                session.add(new_book)
-        session.commit()
 
 
 def app():
@@ -236,7 +182,7 @@ def app():
 if __name__ == '__main__':
     Base.metadata.create_all(engine)
     add_csv()
-    app()
+    # app()
 
-    for book in session.query(Book):
-        print(book)
+    for product in session.query(Product):
+        print(product)
