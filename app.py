@@ -2,7 +2,7 @@ from models import (Base, session, Product, engine)
 import datetime
 import time
 
-from functions import clean_date, clean_price, add_csv, menu, add_product
+from functions import clean_date, clean_price, add_csv, menu, add_product, view_all_products
 
 
 def sub_menu():
@@ -77,46 +77,10 @@ def app():
         # this is slow... refactor to use an indexed dict obj.
         if choice == 'a':
             add_product()
-        elif choice == '2':
-            '''view books'''
-            for book in session.query(Book):
-                print(f'{book.id} | {book.title} | {book.author}')
-            input('\nPress enter to return to the main menu.')
-        elif choice == '3':
-            '''search book'''
-            id_options = []
-            for book in session.query(Book):
-                id_options.append(book.id)
-            id_error = True
-            while id_error:
-                id_choice = input(f'''
-                \nId Options: {id_options}
-                \rBook id: ''')
-                id_choice = clean_id(id_choice, id_options)
-                if type(id_choice) == int:
-                    id_error = False
-            the_book = session.query(Book).filter(Book.id == id_choice).first()
-            print(f'''
-                \n{the_book.title} by {the_book.author}
-                \rPublished: {the_book.published_date}
-                \rPrice: ${the_book.price / 100}''')
-            sub_choice = sub_menu()
-            if sub_choice == '1':
-                '''edit'''
-                the_book.title = edit_check('Title', the_book.title)
-                the_book.author = edit_check('Author', the_book.author)
-                the_book.published_date = edit_check(
-                    'Date', the_book.published_date)
-                the_book.price = edit_check('Price', the_book.price)
-                session.commit()
-                print('Book updated!')
-                time.sleep(1.5)
-            elif sub_choice == '2':
-                '''delete'''
-                session.delete(the_book)
-                session.commit()
-                print('Book deleted!')
-                time.sleep(1.5)
+        elif choice == 't':
+            view_all_products()
+        elif choice == 'v':
+            pass
         elif choice == '4':
             '''book analysis'''
             oldest_book = session.query(Book).order_by(
@@ -144,7 +108,7 @@ if __name__ == '__main__':
     add_csv()
     # app()
     # menu()
-    add_product()
+    view_all_products()
 
     # for product in session.query(Product):
     #     print(product)

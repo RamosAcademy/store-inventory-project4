@@ -110,3 +110,47 @@ def add_product():
     session.commit()
     print('Product added!')
     time.sleep(1.5)
+
+
+def view_all_products():
+    '''view all products'''
+    for product in session.query(Product):
+        print(f'{product.product_id} | {product.product_name} | {product.product_quantity} | {product.product_price/100} | {product.date_updated}')
+    input('\nPress enter to return to the main menu.')
+
+
+def view_product():
+    '''view a product'''
+    id_options = []
+    for product in session.query(Product):
+        id_options.append(product.product_id)
+    # id_error = True
+    # while id_error:
+    #     id_choice = input(f'''
+    #     \nId Options: {id_options}
+    #     \rBook id: ''')
+    #     id_choice = clean_id(id_choice, id_options)
+    #     if type(id_choice) == int:
+    #         id_error = False
+    # the_book = session.query(Book).filter(Book.id == id_choice).first()
+    # print(f'''
+    #     \n{the_book.title} by {the_book.author}
+    #     \rPublished: {the_book.published_date}
+    #     \rPrice: ${the_book.price / 100}''')
+    # sub_choice = sub_menu()
+    # if sub_choice == '1':
+    #     '''edit'''
+    #     the_book.title = edit_check('Title', the_book.title)
+    #     the_book.author = edit_check('Author', the_book.author)
+    #     the_book.published_date = edit_check(
+    #         'Date', the_book.published_date)
+    #     the_book.price = edit_check('Price', the_book.price)
+    #     session.commit()
+    #     print('Book updated!')
+    #     time.sleep(1.5)
+    # elif sub_choice == '2':
+    #     '''delete'''
+    #     session.delete(the_book)
+    #     session.commit()
+    #     print('Book deleted!')
+    #     time.sleep(1.5)
