@@ -2,7 +2,7 @@ from models import (Base, session, Product, engine)
 import datetime
 import time
 
-from functions import clean_date, clean_price, add_csv, menu
+from functions import clean_date, clean_price, add_csv, menu, add_product
 
 
 def sub_menu():
@@ -75,28 +75,8 @@ def app():
         choice = menu()
 
         # this is slow... refactor to use an indexed dict obj.
-        if choice == '1':
-            '''add book'''
-            title = input('Title: ')
-            author = input('Author: ')
-            date_error = True
-            while date_error:
-                date = input('Published Date (Ex. October 25, 2017): ')
-                date = clean_date(date)
-                if type(date) == datetime.date:
-                    date_error = False
-            price_error = True
-            while price_error:
-                price = input('Price (Ex. 25.64): ')
-                price = clean_price(price)
-                if type(price) == int:
-                    price_error = False
-            new_book = Book(title=title, author=author,
-                            published_date=date, price=price)
-            session.add(new_book)
-            session.commit()
-            print('Book added!')
-            time.sleep(1.5)
+        if choice == 'a':
+            add_product()
         elif choice == '2':
             '''view books'''
             for book in session.query(Book):
@@ -163,7 +143,8 @@ if __name__ == '__main__':
     Base.metadata.create_all(engine)
     add_csv()
     # app()
-    menu()
+    # menu()
+    add_product()
 
     # for product in session.query(Product):
     #     print(product)

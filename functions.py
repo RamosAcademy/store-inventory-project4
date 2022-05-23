@@ -1,23 +1,25 @@
 from models import (Base, session, Product, engine)
 import csv
 import datetime
+import time
 
 
 def menu():
     while True:
         print('''
         \nINVENTORY
-        \rPress 'v' to view all products
+        \rPress 't' to view all products
+        \rPress 'v' to view a product
         \rPress 'a' to add a product
         \rPress 'b' to backup your database (.csv)
         \rPress 'q' to exit''')
         choice = input('What would you like to do? ')
-        if choice.lower() in ['v', 'a', 'b', 'q']:
+        if choice.lower() in ['v', 'a', 'b', 'q', 't']:
             return choice
         else:
             input('''
             \rPlease choose one of the options above.
-            \rEnter v, a, b, or q.
+            \rEnter v, a, b, t, or q.
             \rPress Enter to try again.''')
 
 
@@ -38,24 +40,6 @@ def clean_date(date_str):
         return
     else:
         return return_date
-    # months = ['January', 'February', 'March', 'April', 'May', 'June',
-    #           'July', 'August', 'September', 'October', 'November', 'December']
-    # split_date = date_str.split(' ')
-    # try:
-    #     month = int(months.index(split_date[0]) + 1)
-    #     day = int(split_date[1].split(',')[0])
-    #     year = int(split_date[2])
-    #     return_date = datetime.date(year, month, day)
-    # except ValueError:
-    #     input('''
-    #     \n *** DATE ERROR ***
-    #     \r The date format should include a valid Month Day, Year from the past.
-    #     \rEx. January 13, 2003.
-    #     \rPress Enter to try again.
-    #     \r*******************''')
-    #     return
-    # else:
-    #     return return_date
 
 
 def clean_price(price_str):
@@ -70,17 +54,20 @@ def clean_price(price_str):
         \r*******************''')
         return
     return price_in_pennies
-    # try:
-    #     price_float = float(price_str)
-    # except ValueError:
-    #     input('''
-    #     \n*** PRICE ERROR ***
-    #     \rThe price should be a number without a currency symbol.
-    #     \rEx. 10.99
-    #     \rPress Enter to try again.
-    #     \r*******************''')
-    #     return
-    # return int(price_float * 100)
+
+
+def clean_qty(qty_str):
+    try:
+        quantity = int(qty_str)
+    except ValueError:
+        input('''
+        \n*** QUANTITY ERROR ***
+        \rThe quantity should be an intiger.
+        \rEx. 25
+        \rPress Enter to try again.
+        \r*******************''')
+        return
+    return quantity
 
 
 def add_csv():
@@ -99,12 +86,27 @@ def add_csv():
                                       product_quantity=quantity, date_updated=date_updated)
                 session.add(new_product)
         session.commit()
-        #     if book_in_db == None:
-        #         title = row[0]
-        #         author = row[1]
-        #         date = clean_date(row[2])
-        #         price = clean_price(row[3])
-        #         new_book = Book(title=title, author=author,
-        #                         published_date=date, price=price)
-        #         session.add(new_book)
-        # session.commit()
+
+
+def err_check(message: str, func):
+    flag = True
+    while flag:
+        x = input(message)
+        x = func(x)
+        if type(x) == int:
+            flag = False
+    return x
+
+
+def add_product():
+    '''add product to database'''
+    name = input('Product Name: ')
+    date = datetime.date.today()
+    quantity = err_check('Quantity (Ex. 25): ', clean_qty)
+    price = err_check('Price (Ex. 25.64): ', clean_price)
+    new_product = Product(product_name=name, product_quantity=quantity,
+                          product_price=price, date_updated=date)
+    session.add(new_product)
+    session.commit()
+    print('Product added!')
+    time.sleep(1.5)
