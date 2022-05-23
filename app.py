@@ -1,6 +1,5 @@
 from models import (Base, session, Product, engine)
 import datetime
-import csv
 import time
 
 from functions import clean_date, clean_price, add_csv
