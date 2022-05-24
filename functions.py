@@ -23,6 +23,22 @@ def menu():
             \rPress Enter to try again.''')
 
 
+def sub_menu():
+    while True:
+        print('''
+        \n1. Edit
+        \r2. Delete
+        \r3. Return to main menu''')
+        choice = input('What would you like to do? ')
+        if choice in ['1', '2', '3']:
+            return choice
+        else:
+            input('''
+            \rPlease choose one of the options above.
+            \rA number from 1 - 3.
+            \rPress Enter to try again.''')
+
+
 def clean_date(date_str):
     split_date = date_str.split('/')
     try:
@@ -70,22 +86,49 @@ def clean_qty(qty_str):
     return quantity
 
 
+def clean_id(id_str, options):
+    try:
+        book_id = int(id_str)
+    except ValueError:
+        input('''
+        \n*** ID ERROR ***
+        \rThe id should eb anumber.
+        \rEx. 1
+        \rPress Enter to try again.
+        \r****************''')
+        return
+    else:
+        if book_id in options:
+            return book_id
+        else:
+            input(f'''
+        \n*** ID ERROR ***
+        \rOptions: {options}
+        \rPress Enter to try again.
+        \r****************''')
+        return
+
+
 def add_csv():
-    with open('inventory.csv') as csvfile:
-        data = csv.reader(csvfile)
+    with open('inventory.csv') as f:
+        data = csv.reader(f)
         next(data)  # handle for first row being a header https://www.adamsmith.haus/python/answers/how-to-skip-the-first-line-of-a-csv-file-in-python
         for row in data:
             product_in_db = session.query(Product).filter(
-                Product.product_name == row[0]).one_or_none()
-            if product_in_db == None:
-                name = row[0]
-                price = clean_price(row[1])
-                quantity = row[2]
-                date_updated = clean_date(row[3])  # TODO: change clean_date
-                new_product = Product(product_name=name, product_price=price,
-                                      product_quantity=quantity, date_updated=date_updated)
-                session.add(new_product)
-        session.commit()
+                Product.product_name == row[0])
+            print(product_in_db)
+        # for row in data:
+        #     product_in_db = session.query(Product).filter(
+        #         Product.product_name == row[0]).one_or_none()
+        #     if product_in_db == None:
+        #         name = row[0]
+        #         price = clean_price(row[1])
+        #         quantity = row[2]
+        #         date_updated = clean_date(row[3])
+        #         new_product = Product(product_name=name, product_price=price,
+        #                               product_quantity=quantity, date_updated=date_updated)
+        #         session.add(new_product)
+        # session.commit()
 
 
 def err_check(message: str, func):
@@ -96,6 +139,31 @@ def err_check(message: str, func):
         if type(x) == int:
             flag = False
     return x
+
+
+def edit_check(column_name, current_value):
+    print(f'\n*** EDIT {column_name} ***')
+    if column_name == 'Price':
+        print(f'\rCurrent Value: {current_value/100}')
+    elif column_name == 'Date':
+        print(f'\rCurrent Value: {current_value.strftime("%B %d, %Y")}')
+    else:
+        print(f'\rCurrent Value: {current_value}')
+
+    if column_name == 'Date' or column_name == 'Price':
+        while True:
+            changes = input("What would you like to change the value to? ")
+            if column_name == 'Date':
+                changes = clean_date(changes)
+                if type(changes) == datetime.date:
+                    return changes
+            if column_name == 'Price':
+                changes = clean_price(changes)
+                if type(changes) == int:
+                    return changes
+
+    else:
+        return input("What would you like to change the value to? ")
 
 
 def add_product():
@@ -124,33 +192,33 @@ def view_product():
     id_options = []
     for product in session.query(Product):
         id_options.append(product.product_id)
-    # id_error = True
-    # while id_error:
-    #     id_choice = input(f'''
-    #     \nId Options: {id_options}
-    #     \rBook id: ''')
-    #     id_choice = clean_id(id_choice, id_options)
-    #     if type(id_choice) == int:
-    #         id_error = False
-    # the_book = session.query(Book).filter(Book.id == id_choice).first()
-    # print(f'''
-    #     \n{the_book.title} by {the_book.author}
-    #     \rPublished: {the_book.published_date}
-    #     \rPrice: ${the_book.price / 100}''')
-    # sub_choice = sub_menu()
-    # if sub_choice == '1':
-    #     '''edit'''
-    #     the_book.title = edit_check('Title', the_book.title)
-    #     the_book.author = edit_check('Author', the_book.author)
-    #     the_book.published_date = edit_check(
-    #         'Date', the_book.published_date)
-    #     the_book.price = edit_check('Price', the_book.price)
-    #     session.commit()
-    #     print('Book updated!')
-    #     time.sleep(1.5)
-    # elif sub_choice == '2':
-    #     '''delete'''
-    #     session.delete(the_book)
-    #     session.commit()
-    #     print('Book deleted!')
-    #     time.sleep(1.5)
+    id_error = True
+    while id_error:
+        id_choice = input(f'''
+        \nId Options: {id_options}
+        \Product id: ''')
+        id_choice = clean_id(id_choice, id_options)
+        if type(id_choice) == int:
+            id_error = False
+    indiv_product = session.query(Product).filter(
+        Product.product_id == id_choice).first()
+    print(f'''
+        \n{indiv_product.product_id}: {indiv_product.product_name}
+        \rQty: {indiv_product.product_quantity}
+        \rPrice: ${indiv_product.product_price/100}
+        \rDate: {indiv_product.date_updated}''')
+
+
+def export_csv():
+    '''export csv'''
+    with open('inventory_backup.csv', 'w', encoding='UTF8', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(
+            ['product_name', 'product_price', 'product_quantity', 'date_updated'])
+
+        data = []
+        for product in session.query(Product):
+            price = product.product_price / 100
+            data.append(
+                [product.product_name, product.product_quantity, price, product.date_updated])
+        writer.writerows(data)
