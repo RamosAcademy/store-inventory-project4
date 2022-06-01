@@ -39,8 +39,8 @@ def sub_menu():
             \rPress Enter to try again.''')
 
 
-def clean_date(date_str):
-    split_date = date_str.split('/')
+def clean_date(date_str, delim):
+    split_date = date_str.split(delim)
     try:
         month = int(split_date[0])
         day = int(split_date[1])
@@ -112,23 +112,29 @@ def clean_id(id_str, options):
 def add_csv():
     with open('inventory.csv') as f:
         data = csv.reader(f)
-        next(data)  # handle for first row being a header https://www.adamsmith.haus/python/answers/how-to-skip-the-first-line-of-a-csv-file-in-python
+        next(data)
         for row in data:
             product_in_db = session.query(Product).filter(
-                Product.product_name == row[0])
-            print(product_in_db)
-        # for row in data:
-        #     product_in_db = session.query(Product).filter(
-        #         Product.product_name == row[0]).one_or_none()
-        #     if product_in_db == None:
-        #         name = row[0]
-        #         price = clean_price(row[1])
-        #         quantity = row[2]
-        #         date_updated = clean_date(row[3])
-        #         new_product = Product(product_name=name, product_price=price,
-        #                               product_quantity=quantity, date_updated=date_updated)
-        #         session.add(new_product)
-        # session.commit()
+                Product.product_name == row[0]).one_or_none()
+            if product_in_db == None:
+                name = row[0]
+                price = clean_price(row[1])
+                quantity = row[2]
+                date_updated = clean_date(row[3], '/')
+
+                new_product = Product(product_name=name, product_price=price,
+                                      product_quantity=quantity, date_updated=date_updated)
+                session.add(new_product)
+            elif product_in_db != None:
+                date_being_uploaded = clean_date(row[3], '/')
+                date_in_db = product_in_db.date_updated
+                if date_being_uploaded > date_in_db:
+                    product_in_db.product_name = row[0]
+                    product_in_db.product_price = clean_price(row[1])
+                    product_in_db.product_quantity = row[2]
+                    product_in_db.date_updated = date_being_uploaded
+
+        session.commit()
 
 
 def err_check(message: str, func):

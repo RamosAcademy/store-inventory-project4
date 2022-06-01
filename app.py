@@ -30,7 +30,7 @@ if __name__ == '__main__':
     # app()
     # menu()
     # view_product()
-    # export_csv()
+    export_csv()
 
     # for product in session.query(Product):
     #     print(product)
