@@ -103,6 +103,7 @@ def add_csv():
                 Product.product_name == row[0]).one_or_none()
             if product_in_db == None:
                 name = row[0]
+                print(name)
                 price = clean_price(row[1])
                 quantity = row[2]
                 date_updated = clean_date(row[3], '/')
@@ -169,7 +170,6 @@ def add_product():
         new_product = Product(product_name=name, product_quantity=quantity,
                               product_price=price, date_updated=date)
         session.add(new_product)
-        session.commit()
         print('Product added!')
         time.sleep(1.5)
     elif product_exists != None:
@@ -178,6 +178,8 @@ def add_product():
         product_exists.date_updated = date
         print('Product updated!')
         time.sleep(1.5)
+
+    session.commit()
 
 
 def view_all_products():
