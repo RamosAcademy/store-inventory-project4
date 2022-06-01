@@ -19,23 +19,7 @@ def menu():
         else:
             input('''
             \rPlease choose one of the options above.
-            \rEnter v, a, b, t, or q.
-            \rPress Enter to try again.''')
-
-
-def sub_menu():
-    while True:
-        print('''
-        \n1. Edit
-        \r2. Delete
-        \r3. Return to main menu''')
-        choice = input('What would you like to do? ')
-        if choice in ['1', '2', '3']:
-            return choice
-        else:
-            input('''
-            \rPlease choose one of the options above.
-            \rA number from 1 - 3.
+            \rEnter t, v, a, b, or q.
             \rPress Enter to try again.''')
 
 
@@ -189,7 +173,7 @@ def add_product():
 def view_all_products():
     '''view all products'''
     for product in session.query(Product):
-        print(f'{product.product_id} | {product.product_name} | {product.product_quantity} | {product.product_price/100} | {product.date_updated}')
+        print(f'{product.product_id} | Name: {product.product_name} | Qty: {product.product_quantity} | Price: {product.product_price/100} | Date Updated: {product.date_updated}')
     input('\nPress enter to return to the main menu.')
 
 

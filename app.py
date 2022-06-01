@@ -15,7 +15,7 @@ def app():
             view_all_products()
         elif choice == 'v':
             view_product()
-        elif choice == '4':
+        elif choice == 'b':
             export_csv()
 
         else:
@@ -27,10 +27,4 @@ def app():
 if __name__ == '__main__':
     Base.metadata.create_all(engine)
     add_csv()
-    # app()
-    # menu()
-    # view_product()
-    export_csv()
-
-    # for product in session.query(Product):
-    #     print(product)
+    app()
