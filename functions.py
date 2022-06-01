@@ -214,7 +214,7 @@ def export_csv():
     with open('inventory_backup.csv', 'w', encoding='UTF8', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(
-            ['product_name', 'product_price', 'product_quantity', 'date_updated'])
+            ['product_name', 'product_quantity', 'product_price', 'date_updated'])
 
         data = []
         for product in session.query(Product):
