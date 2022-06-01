@@ -1,3 +1,4 @@
+from math import prod
 from models import (Base, session, Product, engine)
 import csv
 import datetime
@@ -161,13 +162,22 @@ def add_product():
     name = input('Product Name: ')
     date = datetime.date.today()
     quantity = err_check('Quantity (Ex. 25): ', clean_qty)
-    price = err_check('Price (Ex. 25.64): ', clean_price)
-    new_product = Product(product_name=name, product_quantity=quantity,
-                          product_price=price, date_updated=date)
-    session.add(new_product)
-    session.commit()
-    print('Product added!')
-    time.sleep(1.5)
+    price = err_check('Price (Ex. $25.64): ', clean_price)
+    product_exists = session.query(Product).filter(
+        Product.product_name == name).one_or_none()
+    if product_exists == None:
+        new_product = Product(product_name=name, product_quantity=quantity,
+                              product_price=price, date_updated=date)
+        session.add(new_product)
+        session.commit()
+        print('Product added!')
+        time.sleep(1.5)
+    elif product_exists != None:
+        product_exists.product_quantity = quantity
+        product_exists.product_quantity = quantity
+        product_exists.date_updated = date
+        print('Product updated!')
+        time.sleep(1.5)
 
 
 def view_all_products():

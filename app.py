@@ -28,3 +28,6 @@ if __name__ == '__main__':
     Base.metadata.create_all(engine)
     add_csv()
     app()
+
+    # for product in session.query(Product):
+    #     print(product)
