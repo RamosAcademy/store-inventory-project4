@@ -1,5 +1,4 @@
-from math import prod
-from models import (Base, session, Product, engine)
+from models import session, Product
 import csv
 import datetime
 import time
@@ -131,31 +130,6 @@ def err_check(message: str, func):
         if type(x) == int:
             flag = False
     return x
-
-
-def edit_check(column_name, current_value):
-    print(f'\n*** EDIT {column_name} ***')
-    if column_name == 'Price':
-        print(f'\rCurrent Value: {current_value/100}')
-    elif column_name == 'Date':
-        print(f'\rCurrent Value: {current_value.strftime("%B %d, %Y")}')
-    else:
-        print(f'\rCurrent Value: {current_value}')
-
-    if column_name == 'Date' or column_name == 'Price':
-        while True:
-            changes = input("What would you like to change the value to? ")
-            if column_name == 'Date':
-                changes = clean_date(changes)
-                if type(changes) == datetime.date:
-                    return changes
-            if column_name == 'Price':
-                changes = clean_price(changes)
-                if type(changes) == int:
-                    return changes
-
-    else:
-        return input("What would you like to change the value to? ")
 
 
 def add_product():

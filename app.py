@@ -1,4 +1,4 @@
-from models import (Base, session, Product, engine)
+from models import Base, engine
 from functions import (add_csv, menu, add_product,
                        view_all_products, view_product,
                        export_csv)
@@ -28,6 +28,3 @@ if __name__ == '__main__':
     Base.metadata.create_all(engine)
     add_csv()
     app()
-
-    # for product in session.query(Product):
-    #     print(product)
