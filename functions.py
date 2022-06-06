@@ -93,16 +93,22 @@ def clean_id(id_str, options):
         return
 
 
+# def clean_name(name: str) -> str:
+#     if name[0] == '"':
+#         clean = name.replace('"', '')
+#     return clean
+
+
 def add_csv():
     with open('inventory.csv') as f:
         data = csv.reader(f)
         next(data)
         for row in data:
+
             product_in_db = session.query(Product).filter(
                 Product.product_name == row[0]).one_or_none()
             if product_in_db == None:
                 name = row[0]
-                print(name)
                 price = clean_price(row[1])
                 quantity = row[2]
                 date_updated = clean_date(row[3], '/')
@@ -198,3 +204,13 @@ def export_csv():
             data.append(
                 [product.product_name, product.product_quantity, price, product.date_updated])
         writer.writerows(data)
+
+
+# def clean_csv():
+#     with open('inventory.csv', 'r', encoding='UTF8', newline='') as f:
+#         reader = csv.reader(f)
+#         for row in reader:
+#             print(row)
+        # with open('clean_inventory.csv', 'w') as new_f:
+        #     writer = csv.writer(new_f)
+        #     writer.writerow(row)
