@@ -26,8 +26,5 @@ def app():
 
 if __name__ == '__main__':
     Base.metadata.create_all(engine)
-    # clean_csv()
     add_csv()
     app()
-    # print(clean_name(
-    #     ['"Bread - Crumbs', ' Bulk"', '$4.49', '88', '1/12/2019']))

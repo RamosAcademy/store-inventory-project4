@@ -56,6 +56,20 @@ def clean_price(price_str):
     return price_in_pennies
 
 
+def add_price(price_str):
+    try:
+        price_in_pennies = int(float(price_str) * 100)
+    except ValueError:
+        input('''
+        \n*** PRICE ERROR ***
+        \rThe price should be a number without a currency symbol.
+        \rEx. 10.99
+        \rPress Enter to try again.
+        \r*******************''')
+        return
+    return price_in_pennies
+
+
 def clean_qty(qty_str):
     try:
         quantity = int(qty_str)
@@ -93,12 +107,6 @@ def clean_id(id_str, options):
         return
 
 
-# def clean_name(name: str) -> str:
-#     if name[0] == '"':
-#         clean = name.replace('"', '')
-#     return clean
-
-
 def add_csv():
     with open('inventory.csv') as f:
         data = csv.reader(f)
@@ -110,7 +118,7 @@ def add_csv():
             if product_in_db == None:
                 name = row[0]
                 price = clean_price(row[1])
-                quantity = row[2]
+                quantity = clean_qty(row[2])
                 date_updated = clean_date(row[3], '/')
 
                 new_product = Product(product_name=name, product_price=price,
@@ -122,7 +130,7 @@ def add_csv():
                 if date_being_uploaded > date_in_db:
                     product_in_db.product_name = row[0]
                     product_in_db.product_price = clean_price(row[1])
-                    product_in_db.product_quantity = row[2]
+                    product_in_db.product_quantity = clean_qty(row[2])
                     product_in_db.date_updated = date_being_uploaded
 
         session.commit()
@@ -143,7 +151,7 @@ def add_product():
     name = input('Product Name: ')
     date = datetime.date.today()
     quantity = err_check('Quantity (Ex. 25): ', clean_qty)
-    price = err_check('Price (Ex. $25.64): ', clean_price)
+    price = err_check('Price (Ex. $25.64): ', add_price)
     product_exists = session.query(Product).filter(
         Product.product_name == name).one_or_none()
     if product_exists == None:
@@ -154,7 +162,7 @@ def add_product():
         time.sleep(1.5)
     elif product_exists != None:
         product_exists.product_quantity = quantity
-        product_exists.product_quantity = quantity
+        product_exists.product_price = price
         product_exists.date_updated = date
         print('Product updated!')
         time.sleep(1.5)
@@ -204,13 +212,3 @@ def export_csv():
             data.append(
                 [product.product_name, product.product_quantity, price, product.date_updated])
         writer.writerows(data)
-
-
-# def clean_csv():
-#     with open('inventory.csv', 'r', encoding='UTF8', newline='') as f:
-#         reader = csv.reader(f)
-#         for row in reader:
-#             print(row)
-        # with open('clean_inventory.csv', 'w') as new_f:
-        #     writer = csv.writer(new_f)
-        #     writer.writerow(row)
