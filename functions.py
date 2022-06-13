@@ -76,12 +76,14 @@ def clean_qty(qty_str):
     except ValueError:
         input('''
         \n*** QUANTITY ERROR ***
-        \rThe quantity should be an intiger.
+        \rThe quantity should be an integer.
         \rEx. 25
         \rPress Enter to try again.
         \r*******************''')
         return
     return quantity
+
+# TODO: update variable name book_id
 
 
 def clean_id(id_str, options):
@@ -90,7 +92,7 @@ def clean_id(id_str, options):
     except ValueError:
         input('''
         \n*** ID ERROR ***
-        \rThe id should eb anumber.
+        \rThe id should be a number.
         \rEx. 1
         \rPress Enter to try again.
         \r****************''')
@@ -151,7 +153,7 @@ def add_product():
     name = input('Product Name: ')
     date = datetime.date.today()
     quantity = err_check('Quantity (Ex. 25): ', clean_qty)
-    price = err_check('Price (Ex. $25.64): ', add_price)
+    price = err_check('Price (Ex. 25.64): ', add_price)
     product_exists = session.query(Product).filter(
         Product.product_name == name).one_or_none()
     if product_exists == None:
